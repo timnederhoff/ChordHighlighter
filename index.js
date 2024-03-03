@@ -4,9 +4,15 @@ const chordsPath = 'path/to/my/songs';
 const song = ['Artist - song.txt'][0]
 try {
   const data = fs.readFileSync(chordsPath + song, 'utf8');
-  const html = ['<!DOCTYPE html><html lang="en"><head><title>Song</title><style> .chord {color: blue;}</style></head><body><code><pre>'];
-  html.push(highlightChords(data));
-  html.push('</pre></code></body></html>');
+  const html = [
+    '<!DOCTYPE html><html lang="en">',
+    '<head><title>Song</title>',
+    '<style>span.chord {color: blue;}</style>',
+    '</head>',
+    '<body><code><pre>',
+    highlightChords(data),
+    '</pre></code></body></html>'
+  ]
   fs.writeFileSync('output.html', html.join('\n'));
 } catch (err) {
   console.error(err);
