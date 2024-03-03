@@ -4,19 +4,34 @@ const chordsPath = 'path/to/my/songs';
 const song = ['Artist - song.txt'][0]
 try {
   const data = fs.readFileSync(chordsPath + song, 'utf8');
-  const html = ['<html lang="en"><head><title>Song</title><style> .chord {color: blue;}</style></head><body><code><pre>'];
+  const html = ['<!DOCTYPE html><html lang="en"><head><title>Song</title><style> .chord {color: blue;}</style></head><body><code><pre>'];
   html.push(highlightChords(data));
   html.push('</pre></code></body></html>');
-
   fs.writeFileSync('output.html', html.join('\n'));
 } catch (err) {
   console.error(err);
 }
 
 function highlightChords(input) {
-  const chords = ['Em', 'Am', 'A', 'G', 'Bm', 'B', 'C', 'F', 'D']
-  const regExpString = chords.map(chord => `${chord}(?=\\s)|(?<=\\s)${chord}`).join('|');
-  console.log(regExpString);
+  const chords = ['C', 'D', 'E', 'F', 'G', 'A', 'B'].reduce((previousValue, currentValue) => {
+    return previousValue.concat([
+        currentValue,
+        currentValue + 'b',
+        currentValue + '#'].reduce((previousValue, currentValue) => {
+          return previousValue.concat([
+              currentValue + '7',
+              currentValue + '6',
+              currentValue + '9',
+              currentValue + 'maj7',
+              currentValue + 'min6',
+              currentValue + 'm',
+              currentValue + 'sus',
+              currentValue + 'dim',
+              currentValue,
+          ]);
+    }, []))
+  }, []);
+  const regExpString = chords.map(chord => `${chord}(?= )|(?<= )${chord}`).join('|');
   const chordsRegExp = new RegExp(regExpString, 'g');
   return input.replaceAll(chordsRegExp, function(matched) { return `<span class="chord">${matched}</span>` } );
 }
